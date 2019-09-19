@@ -8,13 +8,16 @@ def criacao_arquivos():
 def leitura_arquivos(var):
     entrada = open(f'Entrada{var}.txt', 'r')
     linhas = ''
-    l = list()
-    mat = list()
+    mat_aux = list()
     linhas = entrada.readlines()
-    for i in range(0, len(linhas)):
+    for i in range(1, len(linhas) - 1):
         l = linhas[i].strip().split()
-        mat.append(l.copy())
-    return mat
+        if len(l) > 0:
+            mat_aux.append(l.copy())
+    l = linhas[len(linhas) - 1].strip().split()
+    for i in range(0, len(mat_aux)):
+        mat_aux[i].append(l[i])
+    return mat_aux
 
 
 def escrita_arquivos(mat):
@@ -30,4 +33,4 @@ def escrita_arquivos(mat):
 
 # Main
 mat = leitura_arquivos(2)
-escrita_arquivos(mat)
+print(mat)
