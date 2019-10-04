@@ -19,7 +19,7 @@ class GaussJordan(object):
 class GaussSeidel(object):
     def __init__(self):
         self.__k = int()
-        self.__e = int()
+        self.__e = float()
 
     def get_k(self):
         return self.__k
@@ -39,6 +39,10 @@ class SistemaEquacoes(GaussJordan, GaussSeidel):
         self.__mat = list()
         self.__dimencao = dim
         self.leitura_arquivos()
+        self.set_n(len(self.get_mat()))
+        self.set_m(self.get_n() + 1)
+        self.set_k(200)
+        self.set_e(0.00000001)
 
     def get_mat(self):
         return self.__mat
@@ -68,12 +72,10 @@ class SistemaEquacoes(GaussJordan, GaussSeidel):
 
     def escrita_arquivos(self):
         saida = open('Saida.txt', 'w')
+        saida.write(f'Sistema de dimenção {self.get_n()}: ')
         for i in range(len(self.__mat)):
             for j in range(len(self.__mat[i])):
-                if j < len(self.__mat[i]) - 1:
-                    saida.write(self.__mat[i][j] + ', ')
-                else:
-                    saida.write(self.__mat[i][j])
+                saida.write(self.__mat[i][self.get_m()] + ' ')
             saida.write('\n')
 
 
