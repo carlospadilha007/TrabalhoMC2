@@ -72,11 +72,10 @@ class SistemaEquacoes(GaussJordan, GaussSeidel):
 
     def escrita_arquivos(self):
         saida = open('Saida.txt', 'w')
-        saida.write(f'Sistema de dimenção {self.get_n()}: ')
+        saida.write(f'Sistema de dimencao {self.get_n()}: ')
         for i in range(len(self.__mat)):
-            for j in range(len(self.__mat[i])):
-                saida.write(self.__mat[i][self.get_m()] + ' ')
-            saida.write('\n')
+            saida.write(self.__mat[i][self.get_m() - 1] + ' ')
+        saida.write('\n')
 
 
 def criacao_arquivos():
