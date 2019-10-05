@@ -38,11 +38,11 @@ class SistemaEquacoes(GaussJordan, GaussSeidel):
     def __init__(self, dim):
         self.__mat = list()
         self.__dimencao = dim
-        self.leitura_arquivos()
-        self.set_n(len(self.get_mat()))
-        self.set_m(self.get_n() + 1)
-        self.set_k(200)
-        self.set_e(0.00000001)
+        self.__leitura_arquivos()
+        self.set_m(len(self.get_mat()))
+        self.set_n(self.get_m() + 1)
+        self.set_k(1000)
+        self.set_e(0.0000000001)
 
     def get_mat(self):
         return self.__mat
@@ -56,7 +56,7 @@ class SistemaEquacoes(GaussJordan, GaussSeidel):
     def set_dimencao(self, dimecao):
         self.__dimencao = dimecao
 
-    def leitura_arquivos(self):
+    def __leitura_arquivos(self):
         entrada = open(f'Entrada{self.get_dimencao()}.txt', 'r')
         linhas = ''
         mat_aux = list()
@@ -68,14 +68,41 @@ class SistemaEquacoes(GaussJordan, GaussSeidel):
         l = linhas[len(linhas) - 1].strip().split()
         for i in range(0, len(mat_aux)):
             mat_aux[i].append(l[i])
+
+        for i in range(0, len(mat_aux)):
+            for j in range(0, len(mat_aux) + 1):
+                mat_aux[i][j] = int(mat_aux[i][j])
         self.set_mat(mat_aux)
 
-    def escrita_arquivos(self):
+    def __escrita_arquivos(self):
         saida = open('Saida.txt', 'w')
-        saida.write(f'Sistema de dimencao {self.get_n()}: ')
+        saida.write(f'Sistema de dimencao {self.get_m()}: ')
         for i in range(len(self.__mat)):
-            saida.write(self.__mat[i][self.get_m() - 1] + ' ')
+            saida.write(self.__mat[i][self.get_n() - 1] + ' ')
         saida.write('\n')
+
+    def pivotamento(self):
+        pass
+
+    def diagonalizacao(self):
+        j = i = k = int()
+        v = list()
+        aux = list()
+        aux2 = list()
+        for j in range(0, self.get_m()):
+            for k in range(0, self.get_n()):
+                v.append(self.__mat[j][k]/self.__mat[j][j])
+            self.__mat[j] = v.copy()
+            for i in range(0, self.get_m()):
+                aux.clear()
+                if i != j:
+                    for k in range(0, self.get_n()):
+                        aux.append(self.__mat[j][k] * self.__mat[i][j])
+                    self.__mat[j] = aux.copy()
+                    for k in range(0, self.get_n()):
+                        self.__mat[i][k] = self.__mat[i][k] - self.__mat[j][k]
+                    self.__mat[j] = v.copy()
+            v.clear()
 
 
 def criacao_arquivos():
