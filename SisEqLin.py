@@ -78,14 +78,14 @@ class SistemaEquacoes(GaussJordan, GaussSeidel):
         saida = open('Saida.txt', 'w')
         saida.write(f'Sistema de dimencao {self.get_m()}: ')
         for i in range(len(self.__mat)):
-            saida.write(self.__mat[i][self.get_n() - 1] + ' ')
+            saida.write(str(self.__mat[i][self.get_n() - 1]) + ' ')
         saida.write('\n')
 
     def pivotamento(self):
         pass
 
     def diagonalizacao(self):
-        j = i = k = int()
+        j = i = k = pivo = int()
         v = list()
         aux = list()
         aux2 = list()
@@ -93,6 +93,15 @@ class SistemaEquacoes(GaussJordan, GaussSeidel):
             for k in range(0, self.get_n()):
                 v.append(self.__mat[j][k]/self.__mat[j][j])
             self.__mat[j] = v.copy()
+            pivo = j
+            for k in range(j, self.get_m()):
+                print(self.__mat[pivo][j])
+                if self.__mat[k][j] > self.__mat[pivo][j]:
+                    pivo = k
+                    # (pivo)
+            """aux2 = self.__mat[j].copy()
+            self.__mat[j] = self.__mat[pivo].copy()
+            self.__mat[pivo] = aux2.copy()"""
             for i in range(0, self.get_m()):
                 aux.clear()
                 if i != j:
@@ -103,6 +112,7 @@ class SistemaEquacoes(GaussJordan, GaussSeidel):
                         self.__mat[i][k] = self.__mat[i][k] - self.__mat[j][k]
                     self.__mat[j] = v.copy()
             v.clear()
+        self.__escrita_arquivos()
 
 
 def criacao_arquivos():

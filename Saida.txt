@@ -1,1 +1,1 @@
-Sistema de dimencao 5: 26 27 28 29 30
+Sistema de dimencao 3: 3.0 -3.0 4.0 
