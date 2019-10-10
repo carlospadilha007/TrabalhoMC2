@@ -84,8 +84,14 @@ class SistemaEquacoes(GaussJordan, GaussSeidel):
             saida.write(str(self.__mat[i][self.get_n() - 1]) + ' ')
         saida.write('\n')
 
-    def pivotamento(self):
-        pass
+    def __pivotamento(self, j):
+        pivo = j
+        for k in range(j, self.get_m()):
+            if fabs(self.__mat[k][j]) < fabs(self.__mat[pivo][j]):
+                pivo = k
+        aux2 = self.__mat[j].copy()
+        self.__mat[j] = self.__mat[pivo].copy()
+        self.__mat[pivo] = aux2.copy()
 
     def diagonalizacao(self):
         v = list()
@@ -96,14 +102,7 @@ class SistemaEquacoes(GaussJordan, GaussSeidel):
             for k in range(0, self.get_n()):
                 v.append(self.__mat[j][k]/self.__mat[j][j])
             self.__mat[j] = v.copy()
-            pivo = j
-            for k in range(j, self.get_m()):
-                print(self.__mat[k][j])
-                if fabs(self.__mat[k][j]) < fabs(self.__mat[pivo][j]):
-                    pivo = k
-            aux2 = self.__mat[j].copy()
-            self.__mat[j] = self.__mat[pivo].copy()
-            self.__mat[pivo] = aux2.copy()
+            self.__pivotamento(j)
             for i in range(0, self.get_m()):
                 aux.clear()
                 if i != j:
