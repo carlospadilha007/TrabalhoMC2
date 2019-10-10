@@ -1,3 +1,6 @@
+from math import fabs
+
+
 class GaussJordan(object):
     def __init__(self):
         self.__m = int()
@@ -85,23 +88,22 @@ class SistemaEquacoes(GaussJordan, GaussSeidel):
         pass
 
     def diagonalizacao(self):
-        j = i = k = pivo = int()
         v = list()
         aux = list()
         aux2 = list()
         for j in range(0, self.get_m()):
+            aux2.clear()
             for k in range(0, self.get_n()):
                 v.append(self.__mat[j][k]/self.__mat[j][j])
             self.__mat[j] = v.copy()
             pivo = j
             for k in range(j, self.get_m()):
-                print(self.__mat[pivo][j])
-                if self.__mat[k][j] > self.__mat[pivo][j]:
+                print(self.__mat[k][j])
+                if fabs(self.__mat[k][j]) < fabs(self.__mat[pivo][j]):
                     pivo = k
-                    # (pivo)
-            """aux2 = self.__mat[j].copy()
+            aux2 = self.__mat[j].copy()
             self.__mat[j] = self.__mat[pivo].copy()
-            self.__mat[pivo] = aux2.copy()"""
+            self.__mat[pivo] = aux2.copy()
             for i in range(0, self.get_m()):
                 aux.clear()
                 if i != j:
