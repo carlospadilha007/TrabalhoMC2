@@ -59,7 +59,7 @@ class SistemaEquacoes(GaussJordan, GaussSeidel):
         self.__leitura_arquivos()
         self.set_m(len(self.get_mat()))
         self.set_n(self.get_m() + 1)
-        self.set_k(100)
+        self.set_k(500)
         self.set_e(0.0000000001)
         self.__diagonalizacao()
         self.__sistemaIterativo()
@@ -96,9 +96,9 @@ class SistemaEquacoes(GaussJordan, GaussSeidel):
 
     def __escrita_arquivos(self):
         saida = open('Saida.txt', 'w')
-        saida.write(f'Sistema de dimencao {self.get_m()}: ')
-        for i in range(len(self.__mat)):
-            saida.write(str(self.__mat[i][self.get_n() - 1]) + ' ')
+        saida.write(f'Sistema de dimencao {self.get_m()}:\nMatriz diagonalizada: {self.get_mat()} \n')
+        for i in range(self.get_m()):
+            saida.write(str(self.__mat[i][-1]) + ' ')
         saida.write('\n')
 
     # resolusão gauss-jordan
@@ -129,15 +129,22 @@ class SistemaEquacoes(GaussJordan, GaussSeidel):
         v = list()
         aux = list()
         aux2 = list()
+        erro = False
         for j in range(0, self.get_m()):
             aux2.clear()
             for k in range(0, self.get_n()):
-                v.append(self.__mat[j][k] / self.__mat[j][j])
+                try:
+                    v.append(self.__mat[j][k] / self.__mat[j][j])
+                except ZeroDivisionError:
+                    mat = self.__mat.copy()
+                    erro = True
                 self.__pivotamento()
             self.__mat[j] = v.copy()
             for i in range(0, self.get_m()):
                 aux.clear()
                 if i != j:
+                    if erro:
+                        break
                     for k in range(0, self.get_n()):
                         aux.append(self.__mat[j][k] * self.__mat[i][j])
                     self.__mat[j] = aux.copy()
@@ -145,9 +152,20 @@ class SistemaEquacoes(GaussJordan, GaussSeidel):
                         self.__mat[i][k] = self.__mat[i][k] - self.__mat[j][k]
                     self.__mat[j] = v.copy()
             v.clear()
-        self.__escrita_arquivos()
-        print(f'Matriz diagonalizada: {self.get_mat()}')
+        arq = open('Saida.txt', 'a')
+        print(f'Sistema de dimencao {self.get_m()}:\nMatriz diagonalizada: {self.get_mat()}')
+        arq.write('\n')
+        if erro:
+            if mat[- 1][-1] == mat[-1][-2]:
+                print("SPI")
+            else:
+                print("SI")
+        else:
+            self.__escrita_arquivos()
+            # arq.write(f'Matriz diagonalizada: {self.get_mat()}')
+        arq.close()
         self.set_mat(matri_aux.copy())
+
     # resolução iterativa
     def __convergenciaLinhas(self):
         conv = list()
@@ -157,14 +175,18 @@ class SistemaEquacoes(GaussJordan, GaussSeidel):
                 if j != i:
                     sum_aij += fabs(self.__mat[i][j])
             ajj = fabs(self.__mat[i][i])
+            # print(f"Conve: {sum_aij / ajj}")
             if sum_aij < ajj:
                 conv.append(True)
             else:
                 conv.append(False)
+        arq = open('Saida.txt', 'a')
+        print('Convergencia de linhas: ', end='')
         if False not in conv:
             print("Converge")
         else:
-            print("Não converge")
+            print("Não é possivel garantir a convergencia")
+        arq.close()
 
     def __convergenciaSassenfeld(self):
         l2 = list()
@@ -182,19 +204,28 @@ class SistemaEquacoes(GaussJordan, GaussSeidel):
                     else:
                         aux += fabs(self.__mat[i][j])
                 cont += 1
-            l2.append(fabs(aux) / fabs(self.__mat[i][i]))
+            try:
+                l2.append(fabs(aux) / fabs(self.__mat[i][i]))
+            except ZeroDivisionError:
+                break
 
             if l2[-1] < 1:
                 conv.append(True)
             else:
                 conv.append(False)
-        print(l2)
+        arq = open('Saida.txt', 'w')
+
+        print('Convergencia de Sassenfeld: ', end='')
         if False not in conv:
             print("Converge")
         else:
-            print("Não converge")
+            print("Não é possivel garantir a convergencia")
+        arq.close()
 
     def __sistemaIterativo(self):
+        self.__pivotamento()
+        self.__convergenciaSassenfeld()
+        self.__convergenciaLinhas()
         y = list()
         x = list()
         k = 0
@@ -212,9 +243,12 @@ class SistemaEquacoes(GaussJordan, GaussSeidel):
                 for j in range(0, self.get_m()):
                     if j != i:
                         y[i] += self.__mat[i][j] * x[j]
-                y[i] = (self.__mat[i][-1] - y[i]) / self.__mat[i][i]
-                yi = y[i]
-                xi = x[i]
+                try:
+                    y[i] = (self.__mat[i][-1] - y[i]) / self.__mat[i][i]
+                    yi = y[i]
+                    xi = x[i]
+                except ZeroDivisionError:
+                    print(end='')
                 if denominador < fabs(yi):
                     denominador = fabs(yi)
                 if numerado < fabs(yi) - fabs(xi):  # guarda o maximo da diferença de xek e xek-1
@@ -225,7 +259,10 @@ class SistemaEquacoes(GaussJordan, GaussSeidel):
             if erro < self.get_e() and k >= self.get_k():
                 break
             k += 1
-        print(f'x: {x}')
+        arq = open('Saida.txt', 'w')
+        print(f'Vetor resposta do metodo iterativo: {x}\n')
+        print('\033[1;94m-=\033[m' * 70, '\n')
+        arq.close()
 
 
 def valor_max(x):
