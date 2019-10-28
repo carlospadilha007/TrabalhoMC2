@@ -1,5 +1,5 @@
 from SisEqLin import SistemaEquacoes
-
+from os import system
 # Main
 mat2 = SistemaEquacoes(2)
 mat3 = SistemaEquacoes(3)
@@ -15,3 +15,4 @@ mat12 = SistemaEquacoes(12)
 mat13 = SistemaEquacoes(13)
 mat14 = SistemaEquacoes(14)
 mat15 = SistemaEquacoes(15)
+system('pause')
